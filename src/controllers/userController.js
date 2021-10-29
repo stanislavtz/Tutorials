@@ -20,6 +20,7 @@ async function registerUser(req, res) {
         await loginUser(req, res);
     } catch (error) {
         console.error(error);
+        
         if (error.message.includes('E11000')) {
             res.locals.error = { message: `Username is already taken` }
         } else {

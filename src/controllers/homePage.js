@@ -2,10 +2,15 @@ const router = require('express').Router();
 const courseService = require('../services/courseService');
 
 async function getHomePage(req, res) {
-    if(!req.user) {
-        const courses = await courseService.getTop(3);
+    let courses;
+
+    res.locals.courses = courses;
+
+    if (!req.user) {
+        courses = await courseService.getTop(3);
         res.render('home/guest');
     } else {
+        courses = await courseService.getAll();
         res.render('home/user');
     }
 }
