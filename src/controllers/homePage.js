@@ -4,14 +4,15 @@ const courseService = require('../services/courseService');
 async function getHomePage(req, res) {
     let courses;
 
-    res.locals.courses = courses;
-
     if (!req.user) {
         courses = await courseService.getTop(3);
-        res.render('home/guest');
+        res.render('home/guest', {courses});
     } else {
         courses = await courseService.getAll();
-        res.render('home/user');
+
+        courses.forEach(c => c.created = c.createdAt.toString().split(' GMT')[0]);
+
+        res.render('home/user', {courses});
     }
 }
 

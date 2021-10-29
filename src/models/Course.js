@@ -25,7 +25,11 @@ const courseSchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-}, { timestamps: true});
+    owner: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
+    }
+}, { timestamps: true });
 
 const Course = mongoose.model('Course', courseSchema);
 

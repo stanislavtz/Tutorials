@@ -50,10 +50,11 @@ function logOutUser(req, res) {
 }
 
 router.get('/register', isGuest, getRegisterPage);
-router.get('/login', isGuest, getLoginPage);
-router.get('/logout', isAuthenticated, logOutUser);
-
 router.post('/register', isGuest, registerUser);
+
+router.get('/login', isGuest, getLoginPage);
 router.post('/login', isGuest, loginUser);
+
+router.get('/logout', isAuthenticated, logOutUser)
 
 module.exports = router;

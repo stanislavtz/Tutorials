@@ -30,7 +30,7 @@ async function login(data) {
     if (!user) {
         throw { message: 'Invalid username or password' }
     }
-
+    
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
         throw { message: 'Invalid username or password' }
