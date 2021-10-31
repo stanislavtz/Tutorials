@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const courseSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'Title is required'],
+        required: true,
         unique: true
     },
     description: {
         type: String,
-        required: [true, 'Description is required'],
-        max: [50, 'Description should includes max 50 characters']
+        required: true,
+        maxlength: 50
     },
     imageUrl: {
         type: String,
@@ -19,18 +19,15 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    users: [
+    created: {
+        type: Date || String,
+        required: true
+    },
+    enrolledUsers: [
         {
             type: mongoose.Types.ObjectId,
             ref: 'User'
         }
-    ],
-    owner: {
-        type: mongoose.Types.ObjectId,
-        ref: 'User'
-    }
-}, { timestamps: true });
+    ]
 
-const Course = mongoose.model('Course', courseSchema);
-
-module.exports = Course;
+}, { timestamps: true })

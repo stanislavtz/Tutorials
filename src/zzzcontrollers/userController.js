@@ -5,22 +5,18 @@ const { COOKIE_NAME } = require('../utils/constants');
 const { isGuest, isAuthenticated } = require('../middlewares/authMiddleware');
 
 function getRegisterPage(req, res) {
-    res.locals.title = 'Register Page';
     res.render('user/register');
 }
 
 function getLoginPage(req, res) {
-    res.locals.title = 'Login Page';
     res.render('user/login');
 }
 
 async function registerUser(req, res) {
     try {
         await userService.register(req.body);
-        await loginUser(req, res);
+        res.redirect('/');
     } catch (error) {
-        console.error(error);
-        
         if (error.message.includes('E11000')) {
             res.locals.error = { message: `Username is already taken` }
         } else {
@@ -50,11 +46,10 @@ function logOutUser(req, res) {
 }
 
 router.get('/register', isGuest, getRegisterPage);
-router.post('/register', isGuest, registerUser);
-
 router.get('/login', isGuest, getLoginPage);
-router.post('/login', isGuest, loginUser);
+router.get('/logout', isAuthenticated, logOutUser);
 
-router.get('/logout', isAuthenticated, logOutUser)
+router.post('/register', isGuest, registerUser);
+router.post('/login', isGuest, loginUser);
 
 module.exports = router;

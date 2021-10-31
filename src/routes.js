@@ -1,14 +1,12 @@
 const router = require('express').Router();
 
-const homePageController = require('./controllers/homePage');
-const userController = require('./controllers/userController');
-const courseController = require('./controllers/courseController');
+const homePageController = require('./home-page/controller');
+const userController = require('./user/controllers');
 
 router.use('/', homePageController);
 router.use('/user', userController);
-router.use('/course', courseController);
 
-router.all('*', (req, res) => res.render('404'));
+router.all('*', (req, res) => res.render('404', {title: 'Page Not Found'}));
 
 
 module.exports = () => router;

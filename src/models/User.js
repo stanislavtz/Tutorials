@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
             ref: 'Course'
         }
     ]
-}, {timestamps: true});
+}, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
     try {
