@@ -7,12 +7,14 @@ const {
     loginUser,
     logoutUser } = require('./actions');
 
-router.get('/register', getRegisterPage);
-router.post('/register', registerUser);
+const {isGuest, isAuthenticated} = require('../middlewares/authMiddleware');
 
-router.get('/login', getLoginPage);
-router.post('/login', loginUser);
+router.get('/register', isGuest, getRegisterPage);
+router.post('/register', isGuest,registerUser);
 
-router.get('/logout', logoutUser);
+router.get('/login', isGuest, getLoginPage);
+router.post('/login', isGuest, loginUser);
+
+router.get('/logout', isAuthenticated, logoutUser);
 
 module.exports = router;

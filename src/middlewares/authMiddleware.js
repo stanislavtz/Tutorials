@@ -1,5 +1,7 @@
 const { jwtVerify } = require('../utils/jwtUtil');
 const { COOKIE_NAME, JWT_SECRET } = require('../utils/constants');
+const { getCourseById } = require('../course/services');
+const { getUserById } = require('../user/services');
 
 exports.auth = () => async function (req, res, next) {
     const token = req.cookies[COOKIE_NAME];
@@ -24,7 +26,7 @@ exports.isGuest = function (req, res, next) {
     }
 
     res.locals.error = { message: 'You are logged in' }
-    res.status(401).render('404');
+    res.redirect('home/user');
 }
 
 exports.isAuthenticated = function (req, res, next) {
@@ -33,9 +35,27 @@ exports.isAuthenticated = function (req, res, next) {
     }
 
     res.locals.error = { message: 'You are not authenticated' }
-    res.status(401).render('404');
+    res.redirect('user/login');
 }
 
-exports.isAuthorized = function (req, res, next) {
-    // TO DO when there is created object in DB, by logged in user!
+exports.isAuthorized = async function (req, res, next) {
+    const course = await getCourseById(req.params.courseId);
+    
+    if(course.enrolledUsers.includes(req.user?._id)) {
+        return next();
+    }
+
+    res.locals.error = { message: 'You are not authenticated' }
+    res.redirect('user/login');
+}
+
+exports.canEnroll = async (req, res) => {
+    const course = await getCourseById(req.params.courseId);
+    
+    if(!course.enrolledUsers.includes(req.user?._id)) {
+        return next();
+    }
+
+    res.locals.error = { message: 'You are already enrolled that course' }
+    res.redirect('user/login');
 }

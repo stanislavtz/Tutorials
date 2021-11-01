@@ -1,4 +1,5 @@
 const router = require('express').Router();
+
 const { 
     getCreatePage, 
     createCourse,
@@ -8,16 +9,18 @@ const {
     deleteCourse,
     enrollCourse } = require('./actions');
 
-router.get('/create', getCreatePage);
-router.post('/create', createCourse);
+const { isAuthenticated, isAuthorized, canEnroll } = require('../middlewares/authMiddleware');
 
-router.get('/:courseId/details', getDetailsPage);
+router.get('/create', isAuthenticated, getCreatePage);
+router.post('/create', isAuthenticated, createCourse);
 
-router.get('/:courseId/edit', getEditPage);
-router.post('/:courseId/edit', editCourse);
+router.get('/:courseId/details', isAuthenticated, getDetailsPage);
 
-router.get('/:courseId/delete', deleteCourse);
+router.get('/:courseId/edit', isAuthorized, getEditPage);
+router.post('/:courseId/edit', isAuthorized, editCourse);
 
-router.get('/:courseId/enroll', enrollCourse);
+router.get('/:courseId/delete', isAuthorized, deleteCourse);
+
+router.get('/:courseId/enroll', canEnroll, enrollCourse);
 
 module.exports = router;
