@@ -6,7 +6,7 @@ const courseController = require('./course/controllers');
 
 router.use('/', homePageController);
 router.use('/user', userController);
-router.use('/course', courseController);
+router.use('/courses', courseController);
 
 router.all('*', (req, res) => res.render('404', {title: 'Page Not Found'}));
 

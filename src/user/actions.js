@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
-const { COOKIE_NAME } = require('../utils/constants');
 
+const { COOKIE_NAME } = require('../utils/constants');
 const { register, login, getOne } = require('./services');
 
 const getRegisterPage = (req, res) => res.render('user/register');
+
 const registerUser = async (req, res) => {
     try {
         const { username, password, rePassword } = new Object(req.body);
@@ -23,6 +24,7 @@ const registerUser = async (req, res) => {
 }
 
 const getLoginPage = (req, res) => res.render('user/login');
+
 const loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
