@@ -13,5 +13,5 @@ exports.getAllCourses = (user, number) => {
         return Course.find().sort({createdAt: 1}).lean();
     }
 
-    return Course.find().sort({enrolledUsers: -1}).limit(number).lean();
+    return Course.find({}).lean();
 }

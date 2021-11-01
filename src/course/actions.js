@@ -72,7 +72,12 @@ exports.editCourse = async (req, res) => {
 
 exports.deleteCourse = async (req, res) => {
     try {
+        const user = await getUserById(req.user._id);
+        user.courses = user.courses.filter(c => c._id == req.params.courseId);
+
         await deleteCourseById(req.params.courseId);
+        await updateUserById(user._id, user);
+        
         res.redirect('/');
     } catch (error) {
         console.error(error);
@@ -82,9 +87,10 @@ exports.deleteCourse = async (req, res) => {
 exports.enrollCourse = async (req, res) => {
     try {
         const course = await getCourseById(req.params.courseId);
-        // const user = await getUserById(req.user._id);
-
         await course.enrolledUsers.push(req.user._id);
+
+        await updateCourseById(course._id, course);
+
         req.user.isEnroller = true;
 
         res.render('course/details', { ...course });

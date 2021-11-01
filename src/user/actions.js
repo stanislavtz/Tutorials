@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 
 const { COOKIE_NAME } = require('../utils/constants');
-const { register, login, getOne } = require('./services');
+const { register, login, getUserByUsername } = require('./services');
 
 const getRegisterPage = (req, res) => res.render('user/register');
 
@@ -29,7 +29,7 @@ const loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const user = await getOne(username);
+        const user = await getUserByUsername(username);
         if (!user) {
             throw { message: 'Invalid username or password' }
         }

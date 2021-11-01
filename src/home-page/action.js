@@ -1,12 +1,12 @@
 const { getAllCourses } = require('../course/services');
 
-const numberOfCourses  = 3;
+const number = 3;
 
 module.exports = async function (req, res) {
     try {
-        const courses = await getAllCourses(req.user, numberOfCourses);
+        const courses = await getAllCourses(req.user, number);
 
-        res.locals.courses = courses.reduce((acc, el) => {
+        const updatedCourses = courses.reduce((acc, el) => {
             el.created = el.createdAt.toString().split(' GMT')[0];
             acc.push(el);
 
@@ -14,9 +14,10 @@ module.exports = async function (req, res) {
         }, []);
 
         if (!req.user) {
-            res.render('home/guest');
+            const topCourses = updatedCourses.sort((a, b) => b.enrolledUsers.length - a.enrolledUsers.length)
+            res.render('home/guest', { topCourses: topCourses.slice(0, 3) });
         } else {
-            res.render('home/user');
+            res.render('home/user', { updatedCourses });
         }
     } catch (error) {
         console.error(error);
