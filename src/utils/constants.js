@@ -6,7 +6,7 @@ exports.PORT = 5000;
 exports.SERVER_NOTE = `Server is running on http://localhost:`;
 
 exports.DB_NOTE = 'Database is connected!';
-exports.URI = `mongodb://localhost:27017/${projectName}`;
+exports.URI = `mongodb+srv://admin:spQ9ESLrBFcvNai5@Cluster0.2gzoo.mongodb.net/${projectName}?retryWrites=true&w=majority`;
 
 exports.SALT_ROUNDS = 10;
 
