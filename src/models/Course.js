@@ -19,9 +19,9 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    created: {
-        type: Date || String,
-        required: true
+    creator: {
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
     },
     enrolledUsers: [
         {
@@ -30,4 +30,8 @@ const courseSchema = new mongoose.Schema({
         }
     ]
 
-}, { timestamps: true })
+}, { timestamps: true });
+
+const Course = mongoose.model('Course', courseSchema);
+
+module.exports = Course;

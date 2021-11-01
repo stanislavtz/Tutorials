@@ -1,6 +1,9 @@
-module.exports = function (req, res) {
+const { getAll } = require('../course/services');
+
+module.exports = async function (req, res) {
     try {
-        if(!req.user) {
+        res.locals.courses = await getAll();
+        if (!req.user) {
             res.render('home/guest');
         } else {
             res.render('home/user');
