@@ -2,7 +2,8 @@ const {
     createCourse,
     getCourseById,
     updateCourseById,
-    deleteCourseById } = require('./services');
+    deleteCourseById,
+    getAllCourses } = require('./services');
 
 const { getUserById, updateUserById } = require('../user/services');
 
@@ -73,20 +74,31 @@ exports.editCourse = async (req, res) => {
 exports.deleteCourse = async (req, res) => {
     try {
         const user = await getUserById(req.user._id);
+
+        if (!user) {
+            throw { message: 'User doesn\'t exist' }
+        }
+
         user.courses = user.courses.filter(c => c._id == req.params.courseId);
 
         await deleteCourseById(req.params.courseId);
         await updateUserById(user._id, user);
-        
+
         res.redirect('/');
     } catch (error) {
         console.error(error);
+        res.locals.error = error;
+        res.render('course/details');
     }
 }
 
 exports.enrollCourse = async (req, res) => {
     try {
         const course = await getCourseById(req.params.courseId);
+        if(!course) {
+            throw {message: 'The course doesn\'t exist'}
+        }
+
         await course.enrolledUsers.push(req.user._id);
 
         await updateCourseById(course._id, course);
@@ -96,6 +108,19 @@ exports.enrollCourse = async (req, res) => {
         res.render('course/details', { ...course });
 
     } catch (error) {
+        console.error(error);
+        res.locals.error = error;
+        res.render('home/user');
+    }
+}
 
+exports.searchCourses = async (req, res) => {
+    try {
+        const courses = (await getAllCourses()).filter(c => c.title.toLowerCase().includes(req.query.text.toLowerCase()));
+        res.render('home/user', { courses });
+    } catch (error) {
+        console.error(error);
+        res.locals.error = error;
+        res.redirect('/');
     }
 }

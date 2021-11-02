@@ -1,20 +1,16 @@
 const router = require('express').Router();
 
-const { 
+const {
     getCreatePage,
     createCourse,
     getDetailsPage,
     getEditPage,
     editCourse,
     deleteCourse,
-    enrollCourse } = require('./actions');
+    enrollCourse,
+    searchCourses } = require('./actions');
 
 const { isAuthenticated, isAuthorized, canEnroll } = require('../middlewares/authMiddleware');
-
-function showSearchedCourses(req, res) {
-    console.log(req.query)
-    res.redirect('/')
-}
 
 router.get('/create', isAuthenticated, getCreatePage);
 router.post('/create', isAuthenticated, createCourse);
@@ -28,6 +24,6 @@ router.get('/:courseId/delete', isAuthorized, deleteCourse);
 
 router.get('/:courseId/enroll', canEnroll, enrollCourse);
 
-router.get('/search', showSearchedCourses);
+router.get('/search', isAuthenticated, searchCourses);
 
 module.exports = router;

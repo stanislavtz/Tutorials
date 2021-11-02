@@ -26,7 +26,7 @@ exports.isGuest = function (req, res, next) {
     }
 
     res.locals.error = { message: 'You are logged in' }
-    res.redirect('home/user');
+    res.redirect('/');
 }
 
 exports.isAuthenticated = function (req, res, next) {
@@ -35,21 +35,23 @@ exports.isAuthenticated = function (req, res, next) {
     }
 
     res.locals.error = { message: 'You are not authenticated' }
-    res.redirect('user/login');
+    res.redirect('/user/login');
 }
 
 exports.isAuthorized = async function (req, res, next) {
-    const course = await getCourseById(req.params.courseId);
+    const user = await getUserById(req.user._id);
     
-    if(course.enrolledUsers.includes(req.user?._id)) {
+    const coursesList = user.courses.map(c => c.toString())
+    
+    if(coursesList.includes(req.params.courseId)) {
         return next();
     }
 
     res.locals.error = { message: 'You are not authenticated' }
-    res.redirect('user/login');
+    res.redirect('/user/login');
 }
 
-exports.canEnroll = async (req, res) => {
+exports.canEnroll = async (req, res, next) => {
     const course = await getCourseById(req.params.courseId);
     
     if(!course.enrolledUsers.includes(req.user?._id)) {
@@ -57,5 +59,5 @@ exports.canEnroll = async (req, res) => {
     }
 
     res.locals.error = { message: 'You are already enrolled that course' }
-    res.redirect('user/login');
+    res.redirect('/user/login');
 }
