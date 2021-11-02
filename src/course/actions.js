@@ -14,12 +14,7 @@ exports.createCourse = async (req, res) => {
         const data = new Object(req.body);
         data.creator = req.user._id;
 
-        const course = await createCourse(data);
-
-        const user = await getUserById(req.user._id);
-        user.courses.push(course._id);
-
-        await updateUserById(user._id, user);
+        await createCourse(data);
 
         res.redirect('/');
     } catch (error) {
@@ -38,7 +33,7 @@ exports.getDetailsPage = async (req, res) => {
 
         const enrolledUsersList = course.enrolledUsers.map(u => u.toString());
         if (enrolledUsersList.includes(req.user._id)) {
-            req.user.isEnroller = true;
+            req.user.hadEnrolled = true;
         }
 
         res.render('course/details', { ...course });
@@ -95,17 +90,21 @@ exports.deleteCourse = async (req, res) => {
 exports.enrollCourse = async (req, res) => {
     try {
         const course = await getCourseById(req.params.courseId);
+        const user = await getUserById(req.user._id);
+
         if(!course) {
             throw {message: 'The course doesn\'t exist'}
         }
 
-        await course.enrolledUsers.push(req.user._id);
+        course.enrolledUsers.push(req.user._id);
+        user.courses.push(course._id);
 
         await updateCourseById(course._id, course);
+        await updateUserById(user._id, user);
 
         req.user.isEnroller = true;
 
-        res.render('course/details', { ...course });
+        res.redirect(`/courses/${course._id}/details`);
 
     } catch (error) {
         console.error(error);
@@ -116,7 +115,15 @@ exports.enrollCourse = async (req, res) => {
 
 exports.searchCourses = async (req, res) => {
     try {
-        const courses = (await getAllCourses()).filter(c => c.title.toLowerCase().includes(req.query.text.toLowerCase()));
+        let getCourses = (await getAllCourses()).filter(c => c.title.toLowerCase().includes(req.query.text.toLowerCase()));
+       
+        courses = getCourses.reduce((acc, course) => {
+            course.created = course.createdAt.toString().split(' GMT')[0];
+            acc.push(course);
+
+            return acc;
+        }, []);
+
         res.render('home/user', { courses });
     } catch (error) {
         console.error(error);

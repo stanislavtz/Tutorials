@@ -1,7 +1,6 @@
 const { jwtVerify } = require('../utils/jwtUtil');
 const { COOKIE_NAME, JWT_SECRET } = require('../utils/constants');
 const { getCourseById } = require('../course/services');
-const { getUserById } = require('../user/services');
 
 exports.auth = () => async function (req, res, next) {
     const token = req.cookies[COOKIE_NAME];
@@ -39,11 +38,9 @@ exports.isAuthenticated = function (req, res, next) {
 }
 
 exports.isAuthorized = async function (req, res, next) {
-    const user = await getUserById(req.user._id);
+    const course = await getCourseById(req.params.courseId);
     
-    const coursesList = user.courses.map(c => c.toString())
-    
-    if(coursesList.includes(req.params.courseId)) {
+    if(course.creator == req.user?._id) {
         return next();
     }
 
